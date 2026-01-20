@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字小侦探 - 认识数字1-10</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Marker Felt', '幼圆', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#b3e5fc 2px, transparent 2px);
+            background-size: 30px 30px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.8rem;
+            text-shadow: 3px 3px 0 #ffd166;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #1a73e8;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .mode-selector {
+            display: flex;
+            background-color: #ffd166;
+            border-radius: 50px;
+            padding: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 0 #ffb347;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .mode-btn {
+            padding: 12px 24px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #333;
+            background-color: transparent;
+            margin: 5px;
+        }
+        
+        .mode-btn.active {
+            background-color: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 0 #d32f2f;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-panel {
+            background-color: white;
+            border-radius: 30px;
+            padding: 30px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 8px solid #ffd166;
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .game-panel.active {
+            display: block;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .progress {
+            font-size: 1.5rem;
+            color: #1a73e8;
+            font-weight: bold;
+            background-color: #e3f2fd;
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            font-weight: bold;
+            background-color: #ffebee;
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+        
+        .question-title {
+            font-size: 2.2rem;
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .question-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .question-image {
+            width: 100%;
+            max-width: 500px;
+            height: 250px;
+            background-color: #f5f5f5;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 5px solid #c8e6c9;
+            position: relative;
+        }
+        
+        .image-items {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .image-item {
+            width: 80px;
+            height: 80px;
+            background-color: #ffd166;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            box-shadow: 0 5px 0 #ffb347;
+            color: #333;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            color: #1a73e8;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .option {
+            aspect-ratio: 1;
+            background-color: #e3f2fd;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 5px solid transparent;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #1a73e8;
+            box-shadow: 0 8px 0 #bbdefb;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 0 #bbdefb;
+        }
+        
+        .option.correct {
+            background-color: #c8e6c9;
+            border-color: #4caf50;
+            color: #2e7d32;
+            box-shadow: 0 8px 0 #81c784;
+        }
+        
+        .option.incorrect {
+            background-color: #ffcdd2;
+            border-color: #f44336;
+            color: #c62828;
+            box-shadow: 0 8px 0 #e57373;
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-top: 25px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .correct-feedback {
+            color: #4caf50;
+        }
+        
+        .incorrect-feedback {
+            color: #f44336;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+        }
+        
+        .control-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: 0 6px 0 #999;
+        }
+        
+        .next-btn {
+            background-color: #4caf50;
+        }
+        
+        .restart-btn {
+            background-color: #ff9800;
+        }
+        
+        .home-game-btn {
+            background-color: #1a73e8;
+        }
+        
+        .result-panel {
+            background-color: white;
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 8px solid #c8e6c9;
+            display: none;
+            text-align: center;
+        }
+        
+        .result-panel.active {
+            display: block;
+        }
+        
+        .result-title {
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .result-score {
+            font-size: 3rem;
+            color: #1a73e8;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .star {
+            font-size: 4rem;
+            color: #ddd;
+        }
+        
+        .star.filled {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .result-details {
+            font-size: 1.8rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .result-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .home-btn {
+            background-color: #1a73e8;
+        }
+        
+        .restart-result-btn {
+            background-color: #ff6b6b;
+        }
+        
+        .welcome-panel {
+            background-color: white;
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 8px solid #ffd166;
+            text-align: center;
+        }
+        
+        .welcome-title {
+            font-size: 2.8rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-text {
+            font-size: 1.8rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .welcome-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-btn {
+            padding: 18px 36px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .welcome-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .learn-btn {
+            background-color: #4caf50;
+        }
+        
+        .challenge-btn {
+            background-color: #ff9800;
+        }
+        
+        .special-btn {
+            background-color: #9c27b0;
+        }
+        
+        .number-selector-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f3e5f5;
+            border-radius: 20px;
+            width: 100%;
+        }
+        
+        .number-selector-container.active {
+            display: block;
+        }
+        
+        .number-selector-title {
+            font-size: 1.8rem;
+            color: #7b1fa2;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .number-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .number-btn {
+            aspect-ratio: 1;
+            background-color: #e1bee7;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #7b1fa2;
+            cursor: pointer;
+            border: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .number-btn:hover {
+            background-color: #ce93d8;
+            transform: translateY(-5px);
+        }
+        
+        .number-btn.selected {
+            background-color: #9c27b0;
+            color: white;
+            border-color: #7b1fa2;
+        }
+        
+        .start-special-btn {
+            background-color: #9c27b0;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 6px 0 #7b1fa2;
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .start-special-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #7b1fa2;
+        }
+        
+        .instruction {
+            font-size: 1.4rem;
+            color: #1a73e8;
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            padding: 20px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .options-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .question-image {
+                height: 200px;
+            }
+            
+            .image-item {
+                width: 60px;
+                height: 60px;
+                font-size: 2.2rem;
+            }
+            
+            .option {
+                font-size: 2.8rem;
+            }
+            
+            .number-selector {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .question-title {
+                font-size: 1.8rem;
+            }
+            
+            .question-image {
+                height: 180px;
+            }
+            
+            .image-item {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8rem;
+            }
+            
+            .welcome-buttons, .result-buttons {
+                flex-direction: column;
+            }
+            
+            .number-selector {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-search"></i> 数字小侦探 <i class="fas fa-search"></i></h1>
+        <p class="subtitle">看图选数字，聪明又快乐！</p>
+    </div>
+    
+    <div class="game-container">
+        <!-- 欢迎界面 -->
+        <div class="welcome-panel" id="welcomePanel">
+            <h2 class="welcome-title">欢迎来到数字小侦探！</h2>
+            <p class="welcome-text">
+                小朋友，你好！<br>
+                这里有好多有趣的图片，每张图片里都有不同数量的物品。<br>
+                你的任务就是找出正确的数字！准备好了吗？
+            </p>
+            <div class="welcome-buttons">
+                <button class="welcome-btn learn-btn" id="startLearnBtn">
+                    <i class="fas fa-graduation-cap"></i> 顺序学习
+                </button>
+                <button class="welcome-btn challenge-btn" id="startChallengeBtn">
+                    <i class="fas fa-gamepad"></i> 乱序挑战
+                </button>
+                <button class="welcome-btn special-btn" id="startSpecialBtn">
+                    <i class="fas fa-star"></i> 专项练习
+                </button>
+            </div>
+            
+            <!-- 专项练习数字选择器 -->
+            <div class="number-selector-container" id="numberSelectorContainer">
+                <h3 class="number-selector-title">请选择要练习的数字 (1-10)</h3>
+                <div class="number-selector" id="numberSelector">
+                    <!-- 数字按钮会动态生成 -->
+                </div>
+                <button class="start-special-btn" id="startSpecialGameBtn" disabled>
+                    <i class="fas fa-play-circle"></i> 开始练习
+                </button>
+            </div>
+            
+            <div class="instruction">
+                <i class="fas fa-lightbulb"></i> 提示：顺序学习从数字1开始，每个数字有5道题目。乱序挑战会随机出题。专项练习可以针对特定数字进行强化训练。
+            </div>
+        </div>
+        
+        <!-- 游戏界面 -->
+        <div class="game-panel" id="gamePanel">
+            <div class="game-header">
+                <div class="progress" id="progress">题目 1/50</div>
+                <div class="score" id="score">得分: 0</div>
+            </div>
+            
+            <h2 class="question-title" id="questionTitle">图片里有多少个物品？</h2>
+            
+            <div class="question-content">
+                <div class="question-image" id="questionImage">
+                    <!-- 图片内容会动态生成 -->
+                </div>
+                <p class="question-text" id="questionText">请选择正确的数字:</p>
+            </div>
+            
+            <div class="options-container" id="optionsContainer">
+                <!-- 选项会动态生成 -->
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <!-- 反馈信息会动态显示 -->
+            </div>
+            
+            <div class="game-controls">
+                <button class="control-btn home-game-btn" id="homeGameBtn">
+                    <i class="fas fa-home"></i> 返回首页
+                </button>
+                <button class="control-btn next-btn" id="nextBtn" disabled>
+                    <i class="fas fa-arrow-right"></i> 下一题
+                </button>
+                <button class="control-btn restart-btn" id="restartBtn">
+                    <i class="fas fa-redo"></i> 重新开始
+                </button>
+            </div>
+        </div>
+        
+        <!-- 结果界面 -->
+        <div class="result-panel" id="resultPanel">
+            <h2 class="result-title">游戏完成！</h2>
+            <div class="result-score" id="finalScore">得分: 0/50</div>
+            
+            <div class="stars" id="stars">
+                <!-- 星星会根据得分动态生成 -->
+            </div>
+            
+            <p class="result-details" id="resultDetails">
+                你完成了所有题目！<br>
+                真是个聪明的小侦探！
+            </p>
+            
+            <div class="result-buttons">
+                <button class="control-btn home-btn" id="homeBtn">
+                    <i class="fas fa-home"></i> 返回首页
+                </button>
+                <button class="control-btn restart-result-btn" id="restartResultBtn">
+                    <i class="fas fa-redo"></i> 再玩一次
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>专为2-3岁宝宝设计 | 快乐学习，快乐成长！</p>
+    </div>
+
+    <script>
+        // 数字题库 - 每个数字5个不同的图片表示
+        const numberQuestions = {
+            1: [
+                { items: ["🐶"], text: "一只小狗" },
+                { items: ["🍎"], text: "一个苹果" },
+                { items: ["🚗"], text: "一辆汽车" },
+                { items: ["🎈"], text: "一个气球" },
+                { items: ["🌟"], text: "一颗星星" }
+            ],
+            2: [
+                { items: ["🐱", "🐱"], text: "两只小猫" },
+                { items: ["🍌", "🍌"], text: "两根香蕉" },
+                { items: ["✏️", "✏️"], text: "两支铅笔" },
+                { items: ["👂", "👂"], text: "两只耳朵" },
+                { items: ["👟", "👟"], text: "两只鞋子" }
+            ],
+            3: [
+                { items: ["🐼", "🐼", "🐼"], text: "三只熊猫" },
+                { items: ["🍓", "🍓", "🍓"], text: "三个草莓" },
+                { items: ["📚", "📚", "📚"], text: "三本书" },
+                { items: ["👶", "👶", "👶"], text: "三个宝宝" },
+                { items: ["🐦", "🐦", "🐦"], text: "三只小鸟" }
+            ],
+            4: [
+                { items: ["🐰", "🐰", "🐰", "🐰"], text: "四只兔子" },
+                { items: ["🍊", "🍊", "🍊", "🍊"], text: "四个橙子" },
+                { items: ["🎨", "🎨", "🎨", "🎨"], text: "四支画笔" },
+                { items: ["🚲", "🚲", "🚲", "🚲"], text: "四辆自行车" },
+                { items: ["🐜", "🐜", "🐜", "🐜"], text: "四只蚂蚁" }
+            ],
+            5: [
+                { items: ["🐘", "🐘", "🐘", "🐘", "🐘"], text: "五只大象" },
+                { items: ["🍇", "🍇", "🍇", "🍇", "🍇"], text: "五颗葡萄" },
+                { items: ["⭐", "⭐", "⭐", "⭐", "⭐"], text: "五颗星星" },
+                { items: ["🎲", "🎲", "🎲", "🎲", "🎲"], text: "五个骰子" },
+                { items: ["🐠", "🐠", "🐠", "🐠", "🐠"], text: "五条小鱼" }
+            ],
+            6: [
+                { items: ["🐦", "🐦", "🐦", "🐦", "🐦", "🐦"], text: "六只小鸟" },
+                { items: ["🍒", "🍒", "🍒", "🍒", "🍒", "🍒"], text: "六颗樱桃" },
+                { items: ["🎈", "🎈", "🎈", "🎈", "🎈", "🎈"], text: "六个气球" },
+                { items: ["🐝", "🐝", "🐝", "🐝", "🐝", "🐝"], text: "六只蜜蜂" },
+                { items: ["🍪", "🍪", "🍪", "🍪", "🍪", "🍪"], text: "六块饼干" }
+            ],
+            7: [
+                { items: ["🦋", "🦋", "🦋", "🦋", "🦋", "🦋", "🦋"], text: "七只蝴蝶" },
+                { items: ["🍭", "🍭", "🍭", "🍭", "🍭", "🍭", "🍭"], text: "七根棒棒糖" },
+                { items: ["🌈", "🌈", "🌈", "🌈", "🌈", "🌈", "🌈"], text: "七道彩虹" },
+                { items: ["🐢", "🐢", "🐢", "🐢", "🐢", "🐢", "🐢"], text: "七只乌龟" },
+                { items: ["🎁", "🎁", "🎁", "🎁", "🎁", "🎁", "🎁"], text: "七份礼物" }
+            ],
+            8: [
+                { items: ["🐠", "🐠", "🐠", "🐠", "🐠", "🐠", "🐠", "🐠"], text: "八条小鱼" },
+                { items: ["🍩", "🍩", "🍩", "🍩", "🍩", "🍩", "🍩", "🍩"], text: "八个甜甜圈" },
+                { items: ["⚽", "⚽", "⚽", "⚽", "⚽", "⚽", "⚽", "⚽"], text: "八个足球" },
+                { items: ["🐙", "🐙", "🐙", "🐙", "🐙", "🐙", "🐙", "🐙"], text: "八只章鱼" },
+                { items: ["🎵", "🎵", "🎵", "🎵", "🎵", "🎵", "🎵", "🎵"], text: "八个音符" }
+            ],
+            9: [
+                { items: ["🐢", "🐢", "🐢", "🐢", "🐢", "🐢", "🐢", "🐢", "🐢"], text: "九只乌龟" },
+                { items: ["🍦", "🍦", "🍦", "🍦", "🍦", "🍦", "🍦", "🍦", "🍦"], text: "九个冰淇淋" },
+                { items: ["🎈", "🎈", "🎈", "🎈", "🎈", "🎈", "🎈", "🎈", "🎈"], text: "九个气球" },
+                { items: ["🐛", "🐛", "🐛", "🐛", "🐛", "🐛", "🐛", "🐛", "🐛"], text: "九条毛毛虫" },
+                { items: ["🧩", "🧩", "🧩", "🧩", "🧩", "🧩", "🧩", "🧩", "🧩"], text: "九块拼图" }
+            ],
+            10: [
+                { items: ["🐝", "🐝", "🐝", "🐝", "🐝", "🐝", "🐝", "🐝", "🐝", "🐝"], text: "十只蜜蜂" },
+                { items: ["🍬", "🍬", "🍬", "🍬", "🍬", "🍬", "🍬", "🍬", "🍬", "🍬"], text: "十颗糖果" },
+                { items: ["🎯", "🎯", "🎯", "🎯", "🎯", "🎯", "🎯", "🎯", "🎯", "🎯"], text: "十个靶心" },
+                { items: ["🐜", "🐜", "🐜", "🐜", "🐜", "🐜", "🐜", "🐜", "🐜", "🐜"], text: "十只蚂蚁" },
+                { items: ["🌸", "🌸", "🌸", "🌸", "🌸", "🌸", "🌸", "🌸", "🌸", "🌸"], text: "十朵小花" }
+            ]
+        };
+        
+        // 游戏状态
+        let gameState = {
+            mode: "", // "learn", "challenge" 或 "special"
+            currentQuestionIndex: 0,
+            score: 0,
+            questions: [], // 存储生成的问题数组
+            selectedOption: null,
+            answerCorrect: false,
+            selectedNumbers: [], // 用于专项练习：选择的数字
+            autoNextTimer: null // 自动跳转定时器
+        };
+        
+        // 生成顺序学习的问题
+        function generateLearnQuestions() {
+            const questions = [];
+            
+            // 每个数字5个问题，按顺序从1到10
+            for (let num = 1; num <= 10; num++) {
+                const numQuestions = numberQuestions[num];
+                
+                // 随机打乱每个数字的5个问题，然后取全部
+                const shuffledQuestions = [...numQuestions].sort(() => Math.random() - 0.5);
+                
+                shuffledQuestions.forEach(question => {
+                    questions.push({
+                        correctAnswer: num,
+                        items: question.items,
+                        text: question.text
+                    });
+                });
+            }
+            
+            return questions;
+        }
+        
+        // 生成乱序挑战的问题
+        function generateChallengeQuestions() {
+            const questions = [];
+            
+            // 收集所有问题
+            for (let num = 1; num <= 10; num++) {
+                const numQuestions = numberQuestions[num];
+                
+                numQuestions.forEach(question => {
+                    questions.push({
+                        correctAnswer: num,
+                        items: question.items,
+                        text: question.text
+                    });
+                });
+            }
+            
+            // 完全随机打乱
+            return questions.sort(() => Math.random() - 0.5);
+        }
+        
+        // 生成专项练习的问题
+        function generateSpecialQuestions(selectedNumbers) {
+            const questions = [];
+            
+            // 为每个选中的数字生成5个问题
+            selectedNumbers.forEach(num => {
+                const numQuestions = numberQuestions[num];
+                
+                // 随机打乱每个数字的5个问题，然后取全部
+                const shuffledQuestions = [...numQuestions].sort(() => Math.random() - 0.5);
+                
+                shuffledQuestions.forEach(question => {
+                    questions.push({
+                        correctAnswer: num,
+                        items: question.items,
+                        text: question.text
+                    });
+                });
+            });
+            
+            // 打乱所有问题
+            return questions.sort(() => Math.random() - 0.5);
+        }
+        
+        // 生成选项（1个正确答案 + 2个错误答案）
+        function generateOptions(correctAnswer) {
+            const options = [correctAnswer];
+            
+            // 生成两个不同的错误答案
+            while (options.length < 3) {
+                let randomNum;
+                
+                // 确保错误答案与正确答案不同，并且在1-10范围内
+                do {
+                    randomNum = Math.floor(Math.random() * 10) + 1;
+                } while (options.includes(randomNum));
+                
+                options.push(randomNum);
+            }
+            
+            // 随机打乱选项顺序
+            return options.sort(() => Math.random() - 0.5);
+        }
+        
+        // 显示当前问题
+        function showQuestion() {
+            const question = gameState.questions[gameState.currentQuestionIndex];
+            const options = generateOptions(question.correctAnswer);
+            
+            // 更新进度
+            document.getElementById('progress').textContent = 
+                `题目 ${gameState.currentQuestionIndex + 1}/${gameState.questions.length}`;
+            document.getElementById('score').textContent = `得分: ${gameState.score}`;
+            
+            // 更新问题图片
+            const questionImage = document.getElementById('questionImage');
+            questionImage.innerHTML = '';
+            
+            const imageItems = document.createElement('div');
+            imageItems.className = 'image-items';
+            
+            question.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'image-item';
+                itemDiv.textContent = item;
+                imageItems.appendChild(itemDiv);
+            });
+            
+            questionImage.appendChild(imageItems);
+            
+            // 更新问题文本
+            document.getElementById('questionText').textContent = question.text;
+            
+            // 更新选项
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            options.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.dataset.value = option;
+                
+                optionDiv.addEventListener('click', () => selectOption(optionDiv, option, question.correctAnswer));
+                
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // 重置反馈和按钮状态
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('nextBtn').disabled = true;
+            gameState.selectedOption = null;
+            gameState.answerCorrect = false;
+            
+            // 重新启用所有选项
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.pointerEvents = 'auto';
+                opt.classList.remove('correct', 'incorrect');
+            });
+            
+            // 清除自动跳转定时器
+            if (gameState.autoNextTimer) {
+                clearTimeout(gameState.autoNextTimer);
+                gameState.autoNextTimer = null;
+            }
+        }
+        
+        // 选择选项
+        function selectOption(optionElement, selectedValue, correctAnswer) {
+            // 如果已经选择了选项，不再处理
+            if (gameState.selectedOption !== null) return;
+            
+            gameState.selectedOption = selectedValue;
+            gameState.answerCorrect = selectedValue === correctAnswer;
+            
+            // 禁用所有选项
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // 标记正确/错误
+            document.querySelectorAll('.option').forEach(opt => {
+                const value = parseInt(opt.dataset.value);
+                
+                if (value === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (value === selectedValue && value !== correctAnswer) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            // 更新分数
+            if (gameState.answerCorrect) {
+                gameState.score += 1;
+                document.getElementById('score').textContent = `得分: ${gameState.score}`;
+                
+                // 播放正确音效
+                playCorrectSound();
+                
+                // 显示正确反馈
+                const feedback = document.getElementById('feedback');
+                feedback.innerHTML = `<span class="correct-feedback"><i class="fas fa-check-circle"></i> 太棒了！答对了！</span>`;
+                
+                // 答对后自动跳转到下一题（1.5秒后）
+                gameState.autoNextTimer = setTimeout(() => {
+                    if (gameState.currentQuestionIndex < gameState.questions.length - 1) {
+                        nextQuestion();
+                    } else {
+                        // 如果是最后一题，显示完成按钮
+                        document.getElementById('nextBtn').disabled = false;
+                        document.getElementById('nextBtn').innerHTML = '<i class="fas fa-flag-checkered"></i> 查看结果';
+                    }
+                }, 1500);
+                
+            } else {
+                // 播放错误音效
+                playIncorrectSound();
+                
+                // 显示错误反馈（不显示正确答案）
+                const feedback = document.getElementById('feedback');
+                feedback.innerHTML = `<span class="incorrect-feedback"><i class="fas fa-times-circle"></i> 不对哦，再试一次！</span>`;
+                
+                // 答错时不自动跳转，让用户重新选择
+                // 但需要重新启用选项（除了已经选错的）
+                setTimeout(() => {
+                    // 清除错误反馈
+                    feedback.innerHTML = '';
+                    
+                    // 清除错误标记，但保留正确标记
+                    document.querySelectorAll('.option').forEach(opt => {
+                        const value = parseInt(opt.dataset.value);
+                        
+                        // 如果不是正确答案，清除错误标记
+                        if (value !== correctAnswer) {
+                            opt.classList.remove('incorrect');
+                        }
+                    });
+                    
+                    // 重置选择状态，允许重新选择
+                    gameState.selectedOption = null;
+                    
+                    // 重新启用所有选项（除了正确答案）
+                    document.querySelectorAll('.option').forEach(opt => {
+                        const value = parseInt(opt.dataset.value);
+                        
+                        // 如果不是正确答案，可以重新选择
+                        if (value !== correctAnswer) {
+                            opt.style.pointerEvents = 'auto';
+                        }
+                    });
+                }, 1500);
+            }
+            
+            // 如果不是答对自动跳转的情况，启用下一题按钮
+            if (!gameState.answerCorrect) {
+                document.getElementById('nextBtn').disabled = false;
+            }
+        }
+        
+        // 下一题
+        function nextQuestion() {
+            gameState.currentQuestionIndex += 1;
+            
+            if (gameState.currentQuestionIndex < gameState.questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        // 显示结果
+        function showResult() {
+            // 隐藏游戏界面，显示结果界面
+            document.getElementById('gamePanel').classList.remove('active');
+            document.getElementById('resultPanel').classList.add('active');
+            
+            // 计算得分和星星
+            const totalQuestions = gameState.questions.length;
+            const percentage = (gameState.score / totalQuestions) * 100;
+            
+            document.getElementById('finalScore').textContent = `得分: ${gameState.score}/${totalQuestions}`;
+            
+            // 更新结果描述
+            let resultText = '';
+            if (percentage >= 90) {
+                resultText = "太厉害了！你是个数字小天才！";
+            } else if (percentage >= 70) {
+                resultText = "做得很好！你已经认识很多数字了！";
+            } else if (percentage >= 50) {
+                resultText = "不错哦！继续加油学习数字！";
+            } else {
+                resultText = "继续努力，下次一定会更好！";
+            }
+            
+            // 根据模式显示不同的结果描述
+            let modeText = '';
+            if (gameState.mode === 'learn') {
+                modeText = '顺序学习';
+            } else if (gameState.mode === 'challenge') {
+                modeText = '乱序挑战';
+            } else if (gameState.mode === 'special') {
+                modeText = '专项练习';
+                if (gameState.selectedNumbers.length === 1) {
+                    modeText += ` (数字${gameState.selectedNumbers[0]})`;
+                } else {
+                    modeText += ` (${gameState.selectedNumbers.length}个数字)`;
+                }
+            }
+            
+            document.getElementById('resultDetails').innerHTML = `
+                你完成了${modeText}的所有${totalQuestions}道题目！<br>
+                ${resultText}
+            `;
+            
+            // 显示星星（根据得分）
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = '';
+            
+            const starCount = Math.ceil(percentage / 20); // 每20%得一颗星
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement('div');
+                star.className = i < starCount ? 'star filled' : 'star';
+                star.innerHTML = '<i class="fas fa-star"></i>';
+                starsContainer.appendChild(star);
+            }
+            
+            // 播放完成音效
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.text = `游戏完成！你的得分是${gameState.score}分`;
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                
+                const voices = speechSynthesis.getVoices();
+                const chineseVoice = voices.find(voice => voice.lang === 'zh-CN' || voice.lang.startsWith('zh'));
+                if (chineseVoice) utterance.voice = chineseVoice;
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // 开始游戏
+        function startGame(mode, selectedNumbers = []) {
+            gameState.mode = mode;
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.selectedNumbers = selectedNumbers;
+            
+            // 根据模式生成问题
+            if (mode === 'learn') {
+                gameState.questions = generateLearnQuestions();
+                document.getElementById('questionTitle').textContent = "顺序学习：图片里有多少个物品？";
+            } else if (mode === 'challenge') {
+                gameState.questions = generateChallengeQuestions();
+                document.getElementById('questionTitle').textContent = "乱序挑战：图片里有多少个物品？";
+            } else if (mode === 'special') {
+                gameState.questions = generateSpecialQuestions(selectedNumbers);
+                let numberText = selectedNumbers.length === 1 ? 
+                    `数字${selectedNumbers[0]}` : 
+                    `${selectedNumbers.length}个数字`;
+                document.getElementById('questionTitle').textContent = `专项练习 (${numberText})：图片里有多少个物品？`;
+            }
+            
+            // 切换到游戏界面
+            document.getElementById('welcomePanel').style.display = 'none';
+            document.getElementById('numberSelectorContainer').classList.remove('active');
+            document.getElementById('gamePanel').classList.add('active');
+            document.getElementById('resultPanel').classList.remove('active');
+            
+            // 显示第一个问题
+            showQuestion();
+        }
+        
+        // 重新开始游戏
+        function restartGame() {
+            if (gameState.mode) {
+                if (gameState.mode === 'special' && gameState.selectedNumbers.length > 0) {
+                    startGame('special', gameState.selectedNumbers);
+                } else {
+                    startGame(gameState.mode);
+                }
+            }
+        }
+        
+        // 返回首页
+        function goHome() {
+            document.getElementById('welcomePanel').style.display = 'block';
+            document.getElementById('gamePanel').classList.remove('active');
+            document.getElementById('resultPanel').classList.remove('active');
+            document.getElementById('numberSelectorContainer').classList.remove('active');
+            
+            // 重置专项练习选择
+            gameState.selectedNumbers = [];
+            updateNumberSelector();
+        }
+        
+        // 播放正确音效
+        function playCorrectSound() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.text = "太棒了！答对了！";
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.3;
+                
+                const voices = speechSynthesis.getVoices();
+                const chineseVoice = voices.find(voice => voice.lang === 'zh-CN' || voice.lang.startsWith('zh'));
+                if (chineseVoice) utterance.voice = chineseVoice;
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // 播放错误音效
+        function playIncorrectSound() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.text = "再试一次！";
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                
+                const voices = speechSynthesis.getVoices();
+                const chineseVoice = voices.find(voice => voice.lang === 'zh-CN' || voice.lang.startsWith('zh'));
+                if (chineseVoice) utterance.voice = chineseVoice;
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // 初始化专项练习数字选择器
+        function initNumberSelector() {
+            const numberSelector = document.getElementById('numberSelector');
+            numberSelector.innerHTML = '';
+            
+            // 创建1-10数字按钮
+            for (let i = 1; i <= 10; i++) {
+                const numberBtn = document.createElement('div');
+                numberBtn.className = 'number-btn';
+                numberBtn.textContent = i;
+                numberBtn.dataset.number = i;
+                
+                numberBtn.addEventListener('click', () => {
+                    const number = parseInt(numberBtn.dataset.number);
+                    
+                    // 切换选择状态
+                    if (gameState.selectedNumbers.includes(number)) {
+                        // 如果已经选中，则取消选择
+                        gameState.selectedNumbers = gameState.selectedNumbers.filter(n => n !== number);
+                        numberBtn.classList.remove('selected');
+                    } else {
+                        // 如果未选中，则添加选择
+                        gameState.selectedNumbers.push(number);
+                        numberBtn.classList.add('selected');
+                    }
+                    
+                    // 更新开始按钮状态
+                    document.getElementById('startSpecialGameBtn').disabled = gameState.selectedNumbers.length === 0;
+                });
+                
+                numberSelector.appendChild(numberBtn);
+            }
+        }
+        
+        // 更新数字选择器显示
+        function updateNumberSelector() {
+            document.querySelectorAll('.number-btn').forEach(btn => {
+                const number = parseInt(btn.dataset.number);
+                if (gameState.selectedNumbers.includes(number)) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+            
+            document.getElementById('startSpecialGameBtn').disabled = gameState.selectedNumbers.length === 0;
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化语音合成
+            if ('speechSynthesis' in window) {
+                // 预加载语音
+                speechSynthesis.getVoices();
+            }
+            
+            // 初始化数字选择器
+            initNumberSelector();
+            
+            // 欢迎界面按钮
+            document.getElementById('startLearnBtn').addEventListener('click', () => startGame('learn'));
+            document.getElementById('startChallengeBtn').addEventListener('click', () => startGame('challenge'));
+            
+            // 专项练习按钮
+            document.getElementById('startSpecialBtn').addEventListener('click', () => {
+                document.getElementById('numberSelectorContainer').classList.add('active');
+                gameState.selectedNumbers = [];
+                updateNumberSelector();
+            });
+            
+            document.getElementById('startSpecialGameBtn').addEventListener('click', () => {
+                if (gameState.selectedNumbers.length > 0) {
+                    startGame('special', gameState.selectedNumbers);
+                }
+            });
+            
+            // 游戏控制按钮
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+            document.getElementById('restartBtn').addEventListener('click', restartGame);
+            document.getElementById('homeGameBtn').addEventListener('click', goHome);
+            
+            // 结果界面按钮
+            document.getElementById('homeBtn').addEventListener('click', goHome);
+            document.getElementById('restartResultBtn').addEventListener('click', restartGame);
+            
+            // 添加键盘支持
+            document.addEventListener('keydown', (e) => {
+                // 在游戏界面时，数字键1-3可以选择选项
+                if (document.getElementById('gamePanel').classList.contains('active')) {
+                    if (e.key >= '1' && e.key <= '3') {
+                        const index = parseInt(e.key) - 1;
+                        const options = document.querySelectorAll('.option');
+                        if (index < options.length && !gameState.selectedOption) {
+                            const option = options[index];
+                            const value = parseInt(option.dataset.value);
+                            const correctAnswer = gameState.questions[gameState.currentQuestionIndex].correctAnswer;
+                            selectOption(option, value, correctAnswer);
+                        }
+                    } else if (e.key === 'Enter' && !document.getElementById('nextBtn').disabled) {
+                        nextQuestion();
+                    } else if (e.key === 'Escape') {
+                        goHome();
+                    }
+                }
+            });
+            
+            // 初始播放欢迎语音
+            setTimeout(() => {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance();
+                    utterance.text = "欢迎来到数字小侦探！看图选数字，聪明又快乐！";
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 0.8;
+                    
+                    const voices = speechSynthesis.getVoices();
+                    const chineseVoice = voices.find(voice => voice.lang === 'zh-CN' || voice.lang.startsWith('zh'));
+                    if (chineseVoice) utterance.voice = chineseVoice;
+                    
+                    speechSynthesis.speak(utterance);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
